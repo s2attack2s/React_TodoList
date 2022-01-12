@@ -1,0 +1,51 @@
+.screen_input {
+  width: 90%;
+  margin: 10px 5%;
+}
+.screen_input textarea {
+  width: 100%;
+  padding: 5px 10px;
+  border-color: crimson;
+}
+.screen_input button {
+  padding: 5px 10px;
+  background-color:  #3fe397;
+}
+.todoList .todoGroup {
+  margin: 40px 5%;
+  display: flex;
+  justify-content: start;
+  text-align: left;
+}
+.todoList .todoGroup div:first-child {
+  width: 60%;
+}
+.todoList .todoGroup div:not(:first-child) {
+  width: 10%;
+}
+.todoList .todoGroup .setting {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+.todoList .todoGroup .edit {
+  padding: 5px;
+  background-color: #ffc107;
+}
+.todoList .todoGroup .delete {
+  padding: 5px;
+  background-color: #dc3545;
+}
+#workDay{
+  display: block;
+  width: 100%;
+  line-height: 40px;
+  margin: 10px;
+}
+#buttonUpdate{
+  display: none;
+}
+#buttonUpdate button{
+  margin: 5px;
+}
+
