@@ -41,13 +41,13 @@ class TodoList extends Component {
     workDay.value = "dd/mm/yyyy";
     this.setState({ data: [...arr, newData] });
   };
-  edit = (idEdit) => {
+  edit = (id) => {
     let arr = this.state.data;
     document.getElementById("submitContent").style.display = "none";
     document.getElementById("buttonUpdate").style.display = "block";
-    document.getElementById("todoContent").value = arr[idEdit].content;
-    document.getElementById("workDay").value = arr[idEdit].workDay;
-    document.getElementById("idUpdate").value = idEdit;
+    document.getElementById("todoContent").value = arr[id].content;
+    document.getElementById("workDay").value = arr[id].workDay;
+    document.getElementById("idUpdate").value = id;
   };
   updateTodo = () => {
     let id = document.getElementById("idUpdate").value;
