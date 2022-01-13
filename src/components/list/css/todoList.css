@@ -5,16 +5,15 @@
 .screen_input textarea {
   width: 100%;
   padding: 5px 10px;
-  border-color: crimson;
 }
 .screen_input button {
   padding: 5px 10px;
-  background-color:  #3fe397;
+  background-color: #3fe397;
 }
 .todoList .todoGroup {
   margin: 40px 5%;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   text-align: left;
 }
 .todoList .todoGroup div:first-child {
@@ -36,16 +35,16 @@
   padding: 5px;
   background-color: #dc3545;
 }
-#workDay{
+#workDay {
   display: block;
   width: 100%;
   line-height: 40px;
   margin: 10px;
 }
-#buttonUpdate{
-  display: none;
-}
-#buttonUpdate button{
+
+#buttonUpdate button {
   margin: 5px;
 }
-
+.error {
+  border: 1px solid crimson;
+}

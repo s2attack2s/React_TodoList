@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { listTodo } from "../db/todoList";
+import listTodo from "../db/todoList";
 import "../css/todoList.css";
 import Detail from "./detailList";
 class TodoList extends Component {
@@ -7,16 +7,35 @@ class TodoList extends Component {
     super(props);
 
     this.state = {
-      data: [],
+      dataTodo: [],
     };
     this.postTodo = this.postTodo.bind(this);
     this.delete = this.delete.bind(this);
   }
 
+  //Cấu hình giá trị hiển thị
   UNSAFE_componentWillMount() {
-    this.setState({ data: listTodo });
+    this.setState({
+      dataTodo: listTodo,
+      showButton: true,
+    });
   }
 
+  //Sự kiện nhập giá trị nội dung
+  handleOnchangeContent = (e) => {
+    this.setState({
+      todoContent: e.target.value,
+    });
+  };
+
+  //sự kiện nhập giá trị ngày tháng năm
+  handleOnchangeWorkDay = (e) => {
+    this.setState({
+      workDay: e.target.value,
+    });
+  };
+
+  // thêm mới TodoLisst
   postTodo = (e) => {
     e.preventDefault();
 
@@ -27,30 +46,48 @@ class TodoList extends Component {
       (toDay.getMonth() + 1) +
       "-" +
       toDay.getDate();
-    let content = document.getElementById("todoContent");
-    let workDay = document.getElementById("workDay");
+    let content = this.state.todoContent;
+    let workDay = this.state.workDay;
+    if (content) {
+      let newData = {
+        content: content,
+        workDay: workDay,
+        addTime: addTime,
+      };
 
-    let newData = {
-      content: content.value,
-      workDay: workDay.value,
-      addTime: addTime,
-    };
+      let arr = this.state.dataTodo;
 
-    let arr = this.state.data;
-    content.value = null;
-    workDay.value = "dd/mm/yyyy";
-    this.setState({ data: [...arr, newData] });
+      this.setState({
+        dataTodo: [...arr, newData],
+        todoContent: "",
+        workDay: "",
+        idUpdate: "",
+      });
+    } else {
+      this.setState({
+        classErr: "error",
+        plancehoder: "Vui lòng nhập nội dung",
+      });
+    }
   };
+
+  // Hiển thị nội dung cần chỉnh sửa
   edit = (id) => {
-    let arr = this.state.data;
-    document.getElementById("submitContent").style.display = "none";
-    document.getElementById("buttonUpdate").style.display = "block";
-    document.getElementById("todoContent").value = arr[id].content;
-    document.getElementById("workDay").value = arr[id].workDay;
-    document.getElementById("idUpdate").value = id;
+    let arr = this.state.dataTodo;
+    let content = arr[id].content;
+    let workDay = arr[id].workDay;
+    let idUpdate = id;
+    this.setState({
+      showButton: false,
+      todoContent: content,
+      workDay: workDay,
+      idUpdate: idUpdate,
+    });
   };
+
+  // Cập nhật listTodo
   updateTodo = () => {
-    let id = document.getElementById("idUpdate").value;
+    let idUpdate = this.state.idUpdate;
     let toDay = new Date();
     let addTime =
       toDay.getFullYear() +
@@ -58,52 +95,92 @@ class TodoList extends Component {
       (toDay.getMonth() + 1) +
       "-" +
       toDay.getDate();
-    let arr = this.state.data;
-    let content = document.getElementById("todoContent").value;
-    let workDay = document.getElementById("workDay").value;
-    let newData = {
-      content: content,
-      workDay: workDay,
-      addTime: addTime,
-    };
-    arr.splice(id, 1, newData);
-    document.getElementById("submitContent").style.display = "inline-block";
-    document.getElementById("buttonUpdate").style.display = "none";
-    this.setState({ data: arr });
-  };
-  destroyUpdate = () => {
-    document.getElementById("submitContent").style.display = "inline-block";
-    document.getElementById("buttonUpdate").style.display = "none";
-  };
-  delete = (id) => {
-    let arr = this.state.data;
-    arr.splice(id, 1);
-    this.setState({ data: arr });
+    let arr = this.state.dataTodo;
+    let content = this.state.todoContent;
+    let workDay = this.state.workDay;
+    if (content) {
+      let newData = {
+        content: content,
+        workDay: workDay,
+        addTime: addTime,
+      };
+      arr.splice(idUpdate, 1, newData);
+      this.setState({
+        dataTodo: arr,
+        showButton: true,
+        todoContent: "",
+        workDay: "",
+        idUpdate: "",
+      });
+    } else {
+      this.setState({
+        classErr: "error",
+        plancehoder: "Vui lòng nhập nội dung",
+      });
+    }
   };
 
+  //Hủy cập nhật
+  destroyUpdate = () => {
+    this.setState({ showButton: true });
+  };
+
+  //Xóa dữ liệu
+  delete = (id) => {
+    let arr = this.state.dataTodo;
+    arr.splice(id, 1);
+    this.setState({ dataTodo: arr, showButton: true });
+  };
+
+  // Cho phép render lại khi state thay đổi
+  shouldComponentUpdate() {
+    return true;
+  }
+
   render() {
-    return (  
-      <div className="todoList">
-        <div className="screen_input">
-          <textarea
-            type="text"
-            placeholder="Nhập nội dung..."
-            id="todoContent"
-            rows="5"
-          />
-          <input type="date" id="workDay" />
-          <button onClick={this.postTodo} id="submitContent">
-            Gửi
+    // kiểm tra trạng thái để hiển thị button tương ứng
+    let checkShowbutton = this.state.showButton;
+    let button;
+    if (checkShowbutton === true) {
+      button = (
+        <button onClick={this.postTodo} id="submitContent">
+          Gửi
+        </button>
+      );
+    } else {
+      button = (
+        <div id="buttonUpdate">
+          <button onClick={this.updateTodo} id="updateContent">
+            Cập nhật
           </button>
-          <div id="buttonUpdate">
-            <input type="hidden" id="idUpdate" />
-            <button onClick={this.updateTodo} id="updateContent">
-              Cập nhật
-            </button>
-            <button onClick={this.destroyUpdate} id="destroySubmmit">
-              Hủy
-            </button>
-          </div>
+          <button onClick={this.destroyUpdate} id="destroySubmmit">
+            Hủy
+          </button>
+        </div>
+      );
+    }
+    return (
+      <div className="todoList">
+        <h2>Todo List</h2>
+        <div className="screen_input">
+          <label>
+            <textarea
+              type="text"
+              placeholder={this.state.plancehoder || "Nhập nội dung ..."}
+              className={this.state.classErr}
+              id="todoContent"
+              value={this.state.todoContent}
+              onChange={this.handleOnchangeContent.bind(this)}
+              rows="5"
+            />
+          </label>
+          <input
+            type="date"
+            id="workDay"
+            value={this.state.workDay}
+            onChange={this.handleOnchangeWorkDay.bind(this)}
+          />
+          {button}
         </div>
         <div className="todoGroup">
           <div className="content">Nội dung</div>
@@ -112,7 +189,7 @@ class TodoList extends Component {
           <div className="setting">Tùy chọn</div>
         </div>
         <div className="groupContent" id="groupContent">
-          {this.state.data.map((val, key) => (
+          {this.state.dataTodo.map((val, key) => (
             <div className="todoGroup" key={key}>
               <Detail value={val} id={key} key={key} />
               <div className="setting">

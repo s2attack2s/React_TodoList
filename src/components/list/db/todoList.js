@@ -15,4 +15,4 @@ let listTodo = [
         "addTime" : "2022-11-11",
     }
 ]
-export {listTodo};
+export default listTodo;

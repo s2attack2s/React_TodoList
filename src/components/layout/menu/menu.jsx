@@ -10,8 +10,11 @@ class Menu extends Component {
             <Link to="/">
               <li>Trang chủ</li>
             </Link>
-            <Link to="/about">
-              <li>Giới thiệu</li>
+            <Link to="/todo-list-context-api">
+              <li>TodoList - Context API</li>
+            </Link>
+            <Link to="/todo-list-redux">
+              <li>TodoList - Redux</li>
             </Link>
           </ul>
         </div>
