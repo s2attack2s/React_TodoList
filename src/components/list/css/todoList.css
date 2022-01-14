@@ -6,6 +6,7 @@
   width: 100%;
   padding: 5px 10px;
 }
+
 .screen_input button {
   padding: 5px 10px;
   background-color: #3fe397;
@@ -16,10 +17,10 @@
   justify-content: flex-start;
   text-align: left;
 }
-.todoList .todoGroup div:first-child {
+.todoList .todoGroup .content {
   width: 60%;
 }
-.todoList .todoGroup div:not(:first-child) {
+.todoList .todoGroup div:not(.content) {
   width: 10%;
 }
 .todoList .todoGroup .setting {

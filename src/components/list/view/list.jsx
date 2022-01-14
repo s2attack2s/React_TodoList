@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import listTodo from "../db/todoList";
 import "../css/todoList.css";
 import Detail from "./detailList";
+import reactDom from "react-dom";
 class TodoList extends Component {
   constructor(props) {
     super(props);
@@ -9,8 +10,6 @@ class TodoList extends Component {
     this.state = {
       dataTodo: [],
     };
-    this.postTodo = this.postTodo.bind(this);
-    this.delete = this.delete.bind(this);
   }
 
   //Cấu hình giá trị hiển thị
@@ -24,7 +23,7 @@ class TodoList extends Component {
   //Sự kiện nhập giá trị nội dung
   handleOnchangeContent = (e) => {
     this.setState({
-      todoContent: e.target.value,
+      content: e.target.value,
     });
   };
 
@@ -46,20 +45,13 @@ class TodoList extends Component {
       (toDay.getMonth() + 1) +
       "-" +
       toDay.getDate();
-    let content = this.state.todoContent;
-    let workDay = this.state.workDay;
+    let { content, workDay } = this.state;
     if (content) {
-      let newData = {
-        content: content,
-        workDay: workDay,
-        addTime: addTime,
-      };
-
-      let arr = this.state.dataTodo;
+      let newData = { content, workDay, addTime };
 
       this.setState({
-        dataTodo: [...arr, newData],
-        todoContent: "",
+        dataTodo: [newData, ...this.state.dataTodo],
+        content: "",
         workDay: "",
         idUpdate: "",
       });
@@ -72,17 +64,10 @@ class TodoList extends Component {
   };
 
   // Hiển thị nội dung cần chỉnh sửa
-  edit = (id) => {
-    let arr = this.state.dataTodo;
-    let content = arr[id].content;
-    let workDay = arr[id].workDay;
-    let idUpdate = id;
-    this.setState({
-      showButton: false,
-      todoContent: content,
-      workDay: workDay,
-      idUpdate: idUpdate,
-    });
+  edit = (val, key) => {
+    let { content, workDay } = val;
+    let idUpdate = key;
+    this.setState({ content, workDay, showButton: false, idUpdate });
   };
 
   // Cập nhật listTodo
@@ -95,20 +80,15 @@ class TodoList extends Component {
       (toDay.getMonth() + 1) +
       "-" +
       toDay.getDate();
-    let arr = this.state.dataTodo;
-    let content = this.state.todoContent;
-    let workDay = this.state.workDay;
+    let dataTodo = this.state.dataTodo;
+    let { content, workDay } = this.state;
     if (content) {
-      let newData = {
-        content: content,
-        workDay: workDay,
-        addTime: addTime,
-      };
-      arr.splice(idUpdate, 1, newData);
+      let newData = { content, workDay, addTime };
+      dataTodo.splice(idUpdate, 1, newData);
       this.setState({
-        dataTodo: arr,
+        dataTodo,
         showButton: true,
-        todoContent: "",
+        content: "",
         workDay: "",
         idUpdate: "",
       });
@@ -122,14 +102,20 @@ class TodoList extends Component {
 
   //Hủy cập nhật
   destroyUpdate = () => {
-    this.setState({ showButton: true });
+    this.setState({ content: "", workDay: "", idUpdate: "", showButton: true });
   };
 
   //Xóa dữ liệu
-  delete = (id) => {
-    let arr = this.state.dataTodo;
-    arr.splice(id, 1);
-    this.setState({ dataTodo: arr, showButton: true });
+  remove = (id) => {
+    let dataTodo = this.state.dataTodo;
+    dataTodo.splice(id, 1);
+    this.setState({
+      dataTodo,
+      showButton: true,
+      content: "",
+      workDay: "",
+      idUpdate: "",
+    });
   };
 
   // Cho phép render lại khi state thay đổi
@@ -163,22 +149,20 @@ class TodoList extends Component {
       <div className="todoList">
         <h2>Todo List</h2>
         <div className="screen_input">
-          <label>
-            <textarea
-              type="text"
-              placeholder={this.state.plancehoder || "Nhập nội dung ..."}
-              className={this.state.classErr}
-              id="todoContent"
-              value={this.state.todoContent}
-              onChange={this.handleOnchangeContent.bind(this)}
-              rows="5"
-            />
-          </label>
+          <textarea
+            type="text"
+            placeholder={this.state.plancehoder || "Nhập nội dung ..."}
+            className={this.state.classErr}
+            id="todoContent"
+            value={this.state.content}
+            onChange={this.handleOnchangeContent}
+            rows="5"
+          />
           <input
             type="date"
             id="workDay"
             value={this.state.workDay}
-            onChange={this.handleOnchangeWorkDay.bind(this)}
+            onChange={this.handleOnchangeWorkDay}
           />
           {button}
         </div>
@@ -190,17 +174,12 @@ class TodoList extends Component {
         </div>
         <div className="groupContent" id="groupContent">
           {this.state.dataTodo.map((val, key) => (
-            <div className="todoGroup" key={key}>
-              <Detail value={val} id={key} key={key} />
-              <div className="setting">
-                <button className="edit" onClick={() => this.edit(key)}>
-                  Sửa
-                </button>
-                <button className="delete" onClick={() => this.delete(key)}>
-                  Xóa
-                </button>
-              </div>
-            </div>
+            <Detail
+              value={val}
+              key={key}
+              edit={() => this.edit(val, key)}
+              remove={() => this.remove(key)}
+            />
           ))}
         </div>
       </div>
